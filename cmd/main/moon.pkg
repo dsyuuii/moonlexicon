@@ -1,0 +1,5 @@
+import {
+  "2515050243qyf/moonlexicon" @lib,
+}
+
+pkgtype(kind: "executable")
