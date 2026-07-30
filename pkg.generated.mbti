@@ -1,0 +1,93 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "2515050243qyf/moonlexicon"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn compile(ArrayView[Entry]) -> Lexicon
+
+pub fn compile_automaton(ArrayView[Entry]) -> Automaton
+
+pub fn count_by_label(ArrayView[LexiconMatch]) -> Map[String, Int]
+
+pub fn entry(String, label? : String, weight? : Int) -> Entry
+
+pub fn matches_to_tsv(ArrayView[LexiconMatch]) -> String
+
+pub fn parse_tsv(String) -> Array[Entry]
+
+pub fn select_leftmost_longest(ArrayView[LexiconMatch]) -> Array[LexiconMatch]
+
+pub fn top_candidates(ArrayView[Candidate], limit? : Int) -> Array[Candidate]
+
+// Errors
+
+// Types and methods
+type AcNode derive(@debug.Debug)
+
+pub struct Automaton {
+  states : Array[AcNode]
+  entries : Array[Entry]
+} derive(@debug.Debug)
+pub fn Automaton::compile(ArrayView[Entry]) -> Self
+pub fn Automaton::contains_any(Self, String) -> Bool
+pub fn Automaton::count_labels(Self, String) -> Map[String, Int]
+pub fn Automaton::find_all(Self, String) -> Array[LexiconMatch]
+pub fn Automaton::find_leftmost_longest(Self, String) -> Array[LexiconMatch]
+pub fn Automaton::recall_candidates(Self, String) -> Array[Candidate]
+pub fn Automaton::state_count(Self) -> Int
+
+pub struct Builder {
+  entries : Array[Entry]
+} derive(@debug.Debug)
+pub fn Builder::add(Self, String, label? : String, weight? : Int) -> Self
+pub fn Builder::add_all(Self, ArrayView[Entry]) -> Self
+pub fn Builder::new() -> Self
+pub fn Builder::to_automaton(Self) -> Automaton
+pub fn Builder::to_lexicon(Self) -> Lexicon
+
+pub(all) struct Candidate {
+  text : String
+  label : String
+  score : Int
+  span_count : Int
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct Entry {
+  keyword : String
+  label : String
+  weight : Int
+} derive(Eq, ToJson, @debug.Debug)
+pub fn Entry::new(String, label? : String, weight? : Int) -> Self
+
+pub struct Lexicon {
+  nodes : Array[TrieNode]
+  entries : Array[Entry]
+} derive(@debug.Debug)
+pub fn Lexicon::add(Self, Entry) -> Unit
+pub fn Lexicon::contains(Self, String) -> Bool
+pub fn Lexicon::entry_count(Self) -> Int
+pub fn Lexicon::longest_at(Self, String, Int) -> LexiconMatch?
+pub fn Lexicon::lookup(Self, String) -> Array[Entry]
+pub fn Lexicon::new() -> Self
+pub fn Lexicon::node_count(Self) -> Int
+pub fn Lexicon::prefix_search(Self, String) -> Array[Entry]
+pub fn Lexicon::prefixes_at(Self, String, Int) -> Array[LexiconMatch]
+pub fn Lexicon::segment_longest(Self, String) -> Array[LexiconMatch]
+
+pub(all) struct LexiconMatch {
+  keyword : String
+  label : String
+  start : Int
+  end : Int
+  weight : Int
+} derive(Eq, ToJson, @debug.Debug)
+
+type TrieNode derive(@debug.Debug)
+
+// Type aliases
+
+// Traits
+
