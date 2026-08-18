@@ -9,9 +9,9 @@
 //   "moonbitlang/x@0.4.6",
 // }
 
-name = "2515050243qyf/moonlexicon"
+name = "dsyuuii/moonlexicon"
 
-version = "0.1.0"
+version = "0.2.0"
 
 readme = "README.mbt.md"
 

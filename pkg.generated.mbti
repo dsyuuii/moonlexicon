@@ -1,11 +1,15 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "2515050243qyf/moonlexicon"
+package "dsyuuii/moonlexicon"
 
 import {
   "moonbitlang/core/debug",
 }
 
 // Values
+pub fn apply_policy(ArrayView[LexiconMatch], MatchPolicy) -> Array[LexiconMatch]
+
+pub fn best_per_position(ArrayView[LexiconMatch]) -> Array[LexiconMatch]
+
 pub fn compile(ArrayView[Entry]) -> Lexicon
 
 pub fn compile_automaton(ArrayView[Entry]) -> Automaton
@@ -14,13 +18,23 @@ pub fn count_by_label(ArrayView[LexiconMatch]) -> Map[String, Int]
 
 pub fn entry(String, label? : String, weight? : Int) -> Entry
 
+pub fn levenshtein(String, String, max_distance? : Int) -> Int
+
+pub fn match_stats(ArrayView[LexiconMatch]) -> MatchStats
+
+pub fn matched_tokens(ArrayView[Token]) -> Array[Token]
+
 pub fn matches_to_tsv(ArrayView[LexiconMatch]) -> String
 
 pub fn parse_tsv(String) -> Array[Entry]
 
 pub fn select_leftmost_longest(ArrayView[LexiconMatch]) -> Array[LexiconMatch]
 
+pub fn similarity_score(String, String) -> Int
+
 pub fn top_candidates(ArrayView[Candidate], limit? : Int) -> Array[Candidate]
+
+pub fn unmatched_text(ArrayView[Token]) -> String
 
 // Errors
 
@@ -36,6 +50,7 @@ pub fn Automaton::contains_any(Self, String) -> Bool
 pub fn Automaton::count_labels(Self, String) -> Map[String, Int]
 pub fn Automaton::find_all(Self, String) -> Array[LexiconMatch]
 pub fn Automaton::find_leftmost_longest(Self, String) -> Array[LexiconMatch]
+pub fn Automaton::fuzzy_matches(Self, String, String, max_distance? : Int) -> Array[LexiconMatch]
 pub fn Automaton::recall_candidates(Self, String) -> Array[Candidate]
 pub fn Automaton::state_count(Self) -> Int
 
@@ -55,6 +70,16 @@ pub(all) struct Candidate {
   span_count : Int
 } derive(Eq, ToJson, @debug.Debug)
 
+pub(all) struct DictionaryStats {
+  entry_count : Int
+  node_count : Int
+  label_count : Int
+  min_keyword_length : Int
+  max_keyword_length : Int
+  total_keyword_length : Int
+} derive(Eq, ToJson, @debug.Debug)
+pub fn DictionaryStats::sharing_percent(Self) -> Int
+
 pub(all) struct Entry {
   keyword : String
   label : String
@@ -69,6 +94,7 @@ pub struct Lexicon {
 pub fn Lexicon::add(Self, Entry) -> Unit
 pub fn Lexicon::contains(Self, String) -> Bool
 pub fn Lexicon::entry_count(Self) -> Int
+pub fn Lexicon::fuzzy_lookup(Self, String, max_distance? : Int) -> Array[Entry]
 pub fn Lexicon::longest_at(Self, String, Int) -> LexiconMatch?
 pub fn Lexicon::lookup(Self, String) -> Array[Entry]
 pub fn Lexicon::new() -> Self
@@ -76,6 +102,8 @@ pub fn Lexicon::node_count(Self) -> Int
 pub fn Lexicon::prefix_search(Self, String) -> Array[Entry]
 pub fn Lexicon::prefixes_at(Self, String, Int) -> Array[LexiconMatch]
 pub fn Lexicon::segment_longest(Self, String) -> Array[LexiconMatch]
+pub fn Lexicon::stats(Self) -> DictionaryStats
+pub fn Lexicon::tokenize(Self, String) -> Array[Token]
 
 pub(all) struct LexiconMatch {
   keyword : String
@@ -85,9 +113,41 @@ pub(all) struct LexiconMatch {
   weight : Int
 } derive(Eq, ToJson, @debug.Debug)
 
+pub(all) struct MatchPolicy {
+  min_weight : Int
+  max_matches : Int
+  require_label : String
+  prefer_longest : Bool
+} derive(Eq, ToJson, @debug.Debug)
+pub fn MatchPolicy::accepts(Self, LexiconMatch) -> Bool
+pub fn MatchPolicy::default() -> Self
+
+pub(all) struct MatchStats {
+  match_count : Int
+  distinct_surface_count : Int
+  total_weight : Int
+  longest_span : Int
+} derive(Eq, ToJson, @debug.Debug)
+
+pub struct Scanner {
+  automaton : Automaton
+  mut buffer : String
+  mut offset : Int
+} derive(@debug.Debug)
+pub fn Scanner::finish(Self) -> Array[LexiconMatch]
+pub fn Scanner::new(Automaton) -> Self
+pub fn Scanner::push(Self, String) -> Array[LexiconMatch]
+
+pub(all) struct Token {
+  text : String
+  start : Int
+  end : Int
+  matched : Bool
+  label : String
+} derive(Eq, ToJson, @debug.Debug)
+
 type TrieNode derive(@debug.Debug)
 
 // Type aliases
 
 // Traits
-
